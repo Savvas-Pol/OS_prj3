@@ -1,13 +1,21 @@
-all: main
+OBJS = main.o helpers.o list.o
+SOURCE = main.c helpers.c list.c
+HEADERS = helpers.h list.h
+OUT = main
+CC = gcc
+FLAGS = -g -c -Wall
 
-main: main.o helpers.o
-	gcc main.o helpers.o -o main
+all: $(OBJS)
+	$(CC) -g $(OBJS) -o $(OUT)
 
 main.o: main.c
-	gcc -c main.c
+	$(CC) $(FLAGS) main.c
 	
 helpers.o: helpers.c
-	gcc -c helpers.c
+	$(CC) $(FLAGS) helpers.c
 
+list.o: list.c
+	$(CC) $(FLAGS) list.c
+	
 clean:
-	rm -f main main.o helpers.o
+	rm -f $(OBJS) $(OUT)
