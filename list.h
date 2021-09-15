@@ -15,9 +15,10 @@ typedef struct List {
 
 List* list_init();
 void list_destroy(List* l);
-void list_insert(List* l, int id, int start, int end);
-void list_delete();
-List* list_search();
+void list_insert(List* l, int start, int end);
+void list_delete(List* l, int id);
+ListNode* list_search(List* l, int id);
+void list_print(List* l);
 
 
 #endif
