@@ -3,10 +3,11 @@ SOURCE = main.c helpers.c list.c
 HEADERS = helpers.h list.h
 OUT = main
 CC = gcc
-FLAGS = -g -c -Wall -lm
+FLAGS = -g -c -Wall
+LFLAGS = -lm
 
 all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT)
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
 main.o: main.c
 	$(CC) $(FLAGS) main.c
