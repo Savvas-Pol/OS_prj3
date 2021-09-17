@@ -1,6 +1,6 @@
-OBJS = main.o helpers.o list.o
-SOURCE = main.c helpers.c list.c
-HEADERS = helpers.h list.h
+OBJS = main.o helpers.o usedList.o spaceList.o
+SOURCE = main.c helpers.c usedList.c spaceList.c
+HEADERS = helpers.h usedList.h spaceList.h
 OUT = main
 CC = gcc
 FLAGS = -g -c -Wall
@@ -15,8 +15,11 @@ main.o: main.c
 helpers.o: helpers.c
 	$(CC) $(FLAGS) helpers.c
 
-list.o: list.c
-	$(CC) $(FLAGS) list.c
+usedList.o: usedList.c
+	$(CC) $(FLAGS) usedList.c
+	
+spaceList.o: spaceList.c
+	$(CC) $(FLAGS) spaceList.c
 	
 clean:
 	rm -f $(OBJS) $(OUT)
