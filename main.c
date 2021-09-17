@@ -6,6 +6,7 @@
 #include "helpers.h"
 #include "usedList.h"
 #include "spaceList.h"
+#include "list.h"
 
 
 int main(int argc, char** argv) {
@@ -13,11 +14,8 @@ int main(int argc, char** argv) {
 	srand(time(0));
 
 	int i, D, lo, hi, t, T, S;
-	int flag = 1, size, nextArrival, duration;
-	int arrival;
+	int size, nextArrival, duration;
 	char* alg;
-
-	SpaceListNode* new_process;
 
 	if (read_arguments(argc, argv, &D, &lo, &hi, &t, &T, &S, &alg)) {    //read arguments from command line
 		return -1;
@@ -26,7 +24,8 @@ int main(int argc, char** argv) {
 	SpaceList* spaceList = spaceList_init();		//list for memory spaces
 	spaceList_insert(spaceList, 0, S-1);
 	UsedList* usedList = usedList_init();		//list for used memory spaces
-	UsedList* L = usedList_init();				//list for waiting processes
+	List* L = list_init();				//list for waiting processes
+	SpaceListNode* spaceListSpace;
 
 	for(i = 0; i < D; i++) {
 
@@ -38,22 +37,24 @@ int main(int argc, char** argv) {
 
 		} else if(nextArrival == 0){	//arrival of process
 
-			if((spaceList_full(spaceList) == 0) && ((new_process = spaceList_findBestFit(spaceList, size)) != NULL)) {
+			if((spaceList_full(spaceList) == 0)) {
+
 				if(strcmp(alg, "best-fit") == 0) {
-					usedList_insert(usedList, new_process->start, new_process->start + size - 1, duration);
-					new_process->start = new_process->start + size;
-
-					// spaceList_print(spaceList);
-					// usedList_print(usedList);
-
+					spaceListSpace = bestFit(spaceList, size);
 				} else if(strcmp(alg, "worst-fit") == 0) {
-
-
+					spaceListSpace = worstFit(spaceList, size);
 				} else {	//buddy
 
 				}
+
+				if(spaceListSpace != NULL) {
+					usedList_insert(usedList, spaceListSpace->start, spaceListSpace->start + size - 1, duration);
+					spaceListSpace->start = spaceListSpace->start + size;
+				} else {
+					list_insert(L, size, duration); //if it doesn't fit in available spaces, then place in L list
+				}
 			} else {
-				//place in L list
+				list_insert(L, size, duration);	//if memory is full, then place in L list
 			}
 
 			nextArrival = generatePoissonVariable(t);
@@ -62,9 +63,9 @@ int main(int argc, char** argv) {
 			duration = generatePoissonVariable(T);
 			
 		}
-		
-		usedList_reduceDurations(usedList);
-		check_finished_processes(usedList, spaceList);
+
+		usedList_reduceDurations(usedList);				//reduce duration of processes on every iteration
+		check_finished_processes(usedList, spaceList);		//check if any of the processes has finished
 		printf("%d. Size: %d\n",i, size);
 		nextArrival--;
 

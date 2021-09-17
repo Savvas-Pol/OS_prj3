@@ -4,7 +4,7 @@
 #include "usedList.h"
 
 
-UsedList* usedList_init() {
+UsedList* usedList_init() {	//initialize UsedList
 
 	UsedList* new = malloc(sizeof(UsedList));
 	new->head = NULL;
@@ -13,7 +13,7 @@ UsedList* usedList_init() {
 	return new;
 }
 
-void usedList_destroy(UsedList* l) {
+void usedList_destroy(UsedList* l) {	//destroy UsedList
 
 	UsedListNode* node = l->head;
 	UsedListNode* temp = node;
@@ -26,25 +26,25 @@ void usedList_destroy(UsedList* l) {
 	free(l);
 }
 
-void usedList_insert(UsedList* l, int start, int end, int duration) {
+void usedList_insert(UsedList* l, int start, int end, int duration) {	//insert into UsedList based on size
 
 	UsedListNode* temp = l->head;
 	UsedListNode* prev;
 
 	UsedListNode* new = malloc(sizeof(UsedListNode));
-	new->id = l->count;
+	new->id = l->count;	//assing an increasing id to processes
 	l->count++;
 	new->start = start;
 	new->end = end;
 	new->duration = duration;
 
-	int new_size = end - start;
+	int new_size = end - start;	//size of the new process
 	int node_size;
 
-	int first = 1;
+	int first = 1;	//flag to know if we are in the first node of the list
 
 	while(temp != NULL) {
-		node_size = temp->end - temp->start;
+		node_size = temp->end - temp->start;	//size of current process
 		if(new_size < node_size) {
 			if(first) {
 				new->next = temp;
@@ -72,7 +72,7 @@ void usedList_insert(UsedList* l, int start, int end, int duration) {
 	return;
 }
 
-UsedListNode* usedList_search(UsedList* l, int id) {
+UsedListNode* usedList_search(UsedList* l, int id) {	//search in UsedList
 	
 	UsedListNode* temp = l->head;
 
@@ -92,7 +92,7 @@ UsedListNode* usedList_search(UsedList* l, int id) {
 	return NULL;
 }
 
-void usedList_delete(UsedList* l, int id) {
+void usedList_delete(UsedList* l, int id) {	//delete from UsedList
 
 	UsedListNode* temp = usedList_search(l, id);
 	UsedListNode* prev = l->head;
@@ -121,7 +121,7 @@ void usedList_delete(UsedList* l, int id) {
 	return;
 }
 
-void usedList_print(UsedList* l) {
+void usedList_print(UsedList* l) {	//print UsedList
 
 	UsedListNode* temp = l->head;
 
@@ -142,7 +142,7 @@ void usedList_print(UsedList* l) {
 	return;
 }
 
-void usedList_reduceDurations(UsedList* l) {
+void usedList_reduceDurations(UsedList* l) {	//reduce duration of all processes by 1
 
 	UsedListNode* temp = l->head;
 
@@ -154,21 +154,21 @@ void usedList_reduceDurations(UsedList* l) {
 	return;
 }
 
-void check_finished_processes(UsedList* ul, SpaceList* sl) {
+void check_finished_processes(UsedList* ul, SpaceList* sl) {	//check if any process has finished
 
 	UsedListNode* temp = ul->head;
 	SpaceListNode* slnode;
 
 	while(temp != NULL) {
-		if(temp->duration == 0) {
-			if((slnode = spaceList_searchStart(sl, temp->end)) != NULL) {
-				slnode->start = temp->start;
-			} else if((slnode = spaceList_searchEnd(sl, temp->start)) != NULL) {
-				slnode->end = temp->end;
+		if(temp->duration == 0) {		//if process has finished
+			if((slnode = spaceList_searchStart(sl, temp->end)) != NULL) {	//search if any available space starts where current process was ending
+				slnode->start = temp->start;		//update start
+			} else if((slnode = spaceList_searchEnd(sl, temp->start)) != NULL) {	//search if any available space ends where current process was starting
+				slnode->end = temp->end;			//update end
 			} else {
-				spaceList_insert(sl, temp->start, temp->end);
+				spaceList_insert(sl, temp->start, temp->end);		//insert in spaceList
 			}
-			usedList_delete(ul, temp->id);
+			usedList_delete(ul, temp->id);			//remove from usedList
 		}
 		temp = temp->next;
 	}

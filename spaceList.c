@@ -4,7 +4,7 @@
 #include "spaceList.h"
 
 
-SpaceList* spaceList_init() {
+SpaceList* spaceList_init() {		//initialize SpaceList
 
 	SpaceList* new = malloc(sizeof(SpaceList));
 	new->head = NULL;
@@ -13,7 +13,7 @@ SpaceList* spaceList_init() {
 	return new;
 }
 
-void spaceList_destroy(SpaceList* l) {
+void spaceList_destroy(SpaceList* l) {		//destroy SpaceList
 
 	SpaceListNode* node = l->head;
 	SpaceListNode* temp = node;
@@ -26,7 +26,7 @@ void spaceList_destroy(SpaceList* l) {
 	free(l);
 }
 
-void spaceList_insert(SpaceList* l, int start, int end) {
+void spaceList_insert(SpaceList* l, int start, int end) {		//insert in SpaceList based on size
 
 	SpaceListNode* temp = l->head;
 	SpaceListNode* prev;
@@ -70,7 +70,7 @@ void spaceList_insert(SpaceList* l, int start, int end) {
 	return;
 }
 
-SpaceListNode* spaceList_search(SpaceList* l, int start) {
+SpaceListNode* spaceList_search(SpaceList* l, int start) {		//search in SpaceList based on start
 	
 	SpaceListNode* temp = l->head;
 
@@ -90,7 +90,7 @@ SpaceListNode* spaceList_search(SpaceList* l, int start) {
 	return NULL;
 }
 
-void spaceList_delete(SpaceList* l, int start) {
+void spaceList_delete(SpaceList* l, int start) {		//delete from SpaceList
 
 	SpaceListNode* temp = spaceList_search(l, start);
 	SpaceListNode* prev = l->head;
@@ -119,7 +119,7 @@ void spaceList_delete(SpaceList* l, int start) {
 	return;
 }
 
-void spaceList_print(SpaceList* l) {
+void spaceList_print(SpaceList* l) {	//print SpaceList
 
 	SpaceListNode* temp = l->head;
 
@@ -140,7 +140,7 @@ void spaceList_print(SpaceList* l) {
 	return;
 }
 
-int spaceList_full(SpaceList* l) {
+int spaceList_full(SpaceList* l) {		//check if SpaceList is full
 
 	if((l->head->next == NULL) && (l->head->start == l->head->end)) {
 		return 1;
@@ -149,7 +149,7 @@ int spaceList_full(SpaceList* l) {
 	}
 }
 
-SpaceListNode* spaceList_searchStart(SpaceList* l, int end) {
+SpaceListNode* spaceList_searchStart(SpaceList* l, int end) {	//search SpaceListNodes that start on end parameter 
 
 	SpaceListNode* temp = l->head;
 
@@ -163,7 +163,7 @@ SpaceListNode* spaceList_searchStart(SpaceList* l, int end) {
 	return NULL;
 }
 
-SpaceListNode* spaceList_searchEnd(SpaceList* l, int start) {
+SpaceListNode* spaceList_searchEnd(SpaceList* l, int start) {	//search SpaceListNodes that end on start parameter
 
 	SpaceListNode* temp = l->head;
 
@@ -177,7 +177,7 @@ SpaceListNode* spaceList_searchEnd(SpaceList* l, int start) {
 	return NULL;
 }
 
-SpaceListNode* spaceList_findBestFit(SpaceList* l, int size) {
+SpaceListNode* bestFit(SpaceList* l, int size) {	//best-fit algorithm
 
 	SpaceListNode* temp = l->head;
 	SpaceListNode* minSpace = NULL;
@@ -196,4 +196,25 @@ SpaceListNode* spaceList_findBestFit(SpaceList* l, int size) {
 	}
 
 	return minSpace;
+}
+
+SpaceListNode* worstFit(SpaceList* l, int size) {	//worst-fit algorithm
+
+	SpaceListNode* temp = l->head;
+	SpaceListNode* maxSpace = NULL;
+
+	while(temp != NULL) {
+		if(size <= temp->end - temp->start + 1) {	//if the process fits
+			if(maxSpace != NULL) {
+				if(temp->end - temp->start > maxSpace->end - maxSpace->start) {		//find max
+					maxSpace = temp;
+				}
+			} else {
+				maxSpace = temp;
+			}
+		}
+		temp = temp->next;
+	}
+
+	return maxSpace;
 }
