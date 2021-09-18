@@ -22,7 +22,8 @@ void usedList_insert(UsedList* l, int start, int end, int duration);	//insert in
 UsedListNode* usedList_search(UsedList* l, int id);						//search in UsedList based on id
 void usedList_delete(UsedList* l, int id);								//delete from UsedList
 void usedList_print(UsedList* l);										//print UsedList
+
 void usedList_reduceDurations(UsedList* l);								//reduce duration of all processes by 1
-void check_finished_processes(UsedList* ul, SpaceList* sl);				//check if any process has finished
+void checkFinishedProcesses(UsedList* ul, SpaceList* sl);				//check if any process has finished
 
 #endif

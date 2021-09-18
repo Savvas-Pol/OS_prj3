@@ -8,7 +8,6 @@
 #include "spaceList.h"
 #include "list.h"
 
-
 int main(int argc, char** argv) {
 	
 	srand(time(0));
@@ -17,7 +16,7 @@ int main(int argc, char** argv) {
 	int size, nextArrival, duration;
 	char* alg;
 
-	if (read_arguments(argc, argv, &D, &lo, &hi, &t, &T, &S, &alg)) {    //read arguments from command line
+	if (readArguments(argc, argv, &D, &lo, &hi, &t, &T, &S, &alg)) {    //read arguments from command line
 		return -1;
 	}
 
@@ -44,7 +43,7 @@ int main(int argc, char** argv) {
 				} else if(strcmp(alg, "worst-fit") == 0) {
 					spaceListSpace = worstFit(spaceList, size);
 				} else {	//buddy
-
+					spaceListSpace = buddy(spaceList, size);
 				}
 
 				if(spaceListSpace != NULL) {
@@ -65,15 +64,12 @@ int main(int argc, char** argv) {
 		}
 
 		usedList_reduceDurations(usedList);				//reduce duration of processes on every iteration
-		check_finished_processes(usedList, spaceList);		//check if any of the processes has finished
-		printf("%d. Size: %d\n",i, size);
+		checkFinishedProcesses(usedList, spaceList);		//check if any of the processes has finished
+		checkWaitingList(L, spaceList, usedList, alg);		//check waiting list
 		nextArrival--;
-
 	}
 
-	usedList_print(usedList);
 	free(alg);
 	
 	return 0;
 }
-

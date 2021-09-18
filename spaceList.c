@@ -218,3 +218,19 @@ SpaceListNode* worstFit(SpaceList* l, int size) {	//worst-fit algorithm
 
 	return maxSpace;
 }
+
+SpaceListNode* buddy(SpaceList* l, int size) {		//buddy algorithm
+
+	SpaceListNode* temp = l->head;
+	SpaceListNode* buddy = NULL;
+	int middle, fits = 0;
+
+	while(temp != NULL) {
+		middle = (temp->end + 1) / 2;
+		if((size > middle) && (size <= temp->end + 1)) {
+			//xwraei sto miso
+		}
+		temp->next;
+	}
+
+}

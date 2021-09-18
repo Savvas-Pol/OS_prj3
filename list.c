@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "list.h"
 
@@ -95,6 +96,40 @@ void list_print(List* l) {	//print List
 		temp = temp->next;
 	}
 	printf("---------------\n");
+
+	return;
+}
+
+int list_empty(List* l) {							//check if list is empty
+
+	if(l->head == NULL) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+void checkWaitingList(List* l, SpaceList* sl, UsedList* ul, char* alg) {	//checks waiting list processes and available memory
+
+	SpaceListNode* space;
+
+	if(list_empty(l) == 0) {		//if waiting list is not empty
+		if(spaceList_full(sl) == 0) {	//if there is available memory space
+			if(strcmp(alg, "best-fit") == 0){
+				space = bestFit(sl, l->head->size);
+			} else if(strcmp(alg, "worst-fit") == 0) {
+				space = worstFit(sl, l->head->size);
+			} else {
+				space = buddy(sl, l->head->size);
+			}
+
+			if(space != NULL) {
+				usedList_insert(ul, space->start, space->start + l->head->size - 1, l->head->duration);
+				space->start = space->start + l->head->size;
+				list_delete(l);
+			} 
+		}
+	}
 
 	return;
 }

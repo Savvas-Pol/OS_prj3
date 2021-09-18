@@ -154,7 +154,7 @@ void usedList_reduceDurations(UsedList* l) {	//reduce duration of all processes 
 	return;
 }
 
-void check_finished_processes(UsedList* ul, SpaceList* sl) {	//check if any process has finished
+void checkFinishedProcesses(UsedList* ul, SpaceList* sl) {	//check if any process has finished
 
 	UsedListNode* temp = ul->head;
 	SpaceListNode* slnode;
