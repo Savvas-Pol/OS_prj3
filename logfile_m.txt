@@ -1,0 +1,25 @@
+Process with id: 0 placed in memory from: 0 to: 3 at: 1 time
+Process with id: 1 placed in memory from: 4 to: 5 at: 2 time
+Process with id: 2 placed in memory from: 6 to: 10 at: 3 time
+Process with size: 10 and duration: 5 can't fit in available memory spaces! Placed in waiting list at: 4 time
+Process with id: 3 placed in memory from: 11 to: 15 at: 5 time
+Process with id: 4 placed in memory from: 16 to: 16 at: 6 time
+Process with size: 8 and duration: 5 can't fit in available memory spaces! Placed in waiting list at: 7 time
+Process with size: 6 and duration: 2 can't fit in available memory spaces! Placed in waiting list at: 8 time
+Process with size: 7 and duration: 24 can't fit in available memory spaces! Placed in waiting list at: 9 time
+Process with id: 5 placed in memory from: 17 to: 18 at: 10 time
+Memory full! Process with size: 6 and duration: 8 placed in waiting list at: 11 time
+Memory full! Process with size: 4 and duration: 0 placed in waiting list at: 12 time
+Memory full! Process with size: 7 and duration: 1 placed in waiting list at: 13 time
+Memory full! Process with size: 6 and duration: 1 placed in waiting list at: 14 time
+Memory full! Process with size: 9 and duration: 4 placed in waiting list at: 15 time
+Memory full! Process with size: 2 and duration: 21 placed in waiting list at: 16 time
+Memory full! Process with size: 9 and duration: 16 placed in waiting list at: 17 time
+Memory full! Process with size: 9 and duration: 0 placed in waiting list at: 18 time
+Memory full! Process with size: 1 and duration: 1 placed in waiting list at: 19 time
+Memory full! Process with size: 6 and duration: 3 placed in waiting list at: 20 time
+Memory full! Process with size: 2 and duration: 7 placed in waiting list at: 21 time
+Memory full! Process with size: 8 and duration: 2 placed in waiting list at: 22 time
+Memory full! Process with size: 6 and duration: 6 placed in waiting list at: 23 time
+Memory full! Process with size: 4 and duration: 2 placed in waiting list at: 24 time
+Totally 18 processes were placed in waiting list
