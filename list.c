@@ -26,7 +26,7 @@ void list_destroy(List* l) {	//destroy List
 	free(l);
 }
 
-void list_insert(List* l, int size, int duration) {	//insert in List
+void list_insert(List* l, int size, int duration, int arrival) {	//insert in List
 
 	ListNode* temp = l->head;
 
@@ -34,6 +34,7 @@ void list_insert(List* l, int size, int duration) {	//insert in List
 	l->count++;
 	new->size = size;
 	new->duration = duration;
+	new->arrival = arrival;
 	new->next = NULL;
 
 	if(temp != NULL) {
@@ -109,7 +110,7 @@ int list_empty(List* l) {							//check if list is empty
 	}
 }
 
-void checkWaitingList(List* l, SpaceList* sl, UsedList* ul, char* alg) {	//checks waiting list processes and available memory
+void checkWaitingList(List* l, SpaceList* sl, UsedList* ul, char* alg, FILE* logfile, int i) {	//checks waiting list processes and available memory
 
 	SpaceListNode* space;
 
@@ -125,6 +126,7 @@ void checkWaitingList(List* l, SpaceList* sl, UsedList* ul, char* alg) {	//check
 
 			if(space != NULL) {
 				usedList_insert(ul, space->start, space->start + l->head->size - 1, l->head->duration);
+				fprintf(logfile, "Process with id: %d removed from waiting list and placed in memory from: %d to: %d at: %d time. Waiting time: %d\n", ul->count-1, space->start, space->start + l->head->size - 1, i, i - l->head->arrival);
 				space->start = space->start + l->head->size;
 				list_delete(l);
 			} 

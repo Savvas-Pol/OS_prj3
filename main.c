@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include "helpers.h"
 #include "usedList.h"
@@ -16,6 +20,8 @@ int main(int argc, char** argv) {
 	int size, nextArrival, duration;
 	char* alg;
 
+	FILE* logfile = fopen("logfile", "w");
+
 	if (readArguments(argc, argv, &D, &lo, &hi, &t, &T, &S, &alg)) {    //read arguments from command line
 		return -1;
 	}
@@ -25,6 +31,10 @@ int main(int argc, char** argv) {
 	UsedList* usedList = usedList_init();		//list for used memory spaces
 	List* L = list_init();				//list for waiting processes
 	SpaceListNode* spaceListSpace;
+
+	//pid_t pid = fork();
+
+	//shared memory segment
 
 	for(i = 0; i < D; i++) {
 
@@ -48,12 +58,15 @@ int main(int argc, char** argv) {
 
 				if(spaceListSpace != NULL) {
 					usedList_insert(usedList, spaceListSpace->start, spaceListSpace->start + size - 1, duration);
+					fprintf(logfile, "Process with id: %d placed in memory from: %d to: %d at: %d time\n", usedList->count-1, spaceListSpace->start, spaceListSpace->start + size - 1, i);
 					spaceListSpace->start = spaceListSpace->start + size;
 				} else {
-					list_insert(L, size, duration); //if it doesn't fit in available spaces, then place in L list
+					list_insert(L, size, duration, i); //if it doesn't fit in available spaces, then place in L list
+					fprintf(logfile, "Process with size: %d and duration: %d can't fit in available memory spaces! Placed in waiting list at: %d time\n", size, duration, i);
 				}
 			} else {
-				list_insert(L, size, duration);	//if memory is full, then place in L list
+				list_insert(L, size, duration, i);	//if memory is full, then place in L list
+				fprintf(logfile, "Memory full! Process with size: %d and duration: %d placed in waiting list at: %d time\n", size, duration, i);
 			}
 
 			nextArrival = generatePoissonVariable(t);
@@ -64,10 +77,16 @@ int main(int argc, char** argv) {
 		}
 
 		usedList_reduceDurations(usedList);				//reduce duration of processes on every iteration
-		checkFinishedProcesses(usedList, spaceList);		//check if any of the processes has finished
-		checkWaitingList(L, spaceList, usedList, alg);		//check waiting list
+		checkFinishedProcesses(usedList, spaceList, logfile, i);		//check if any of the processes has finished
+		checkWaitingList(L, spaceList, usedList, alg, logfile, i);		//check waiting list
 		nextArrival--;
 	}
+
+	fprintf(logfile, "Totally %d processes were placed in waiting list\n", L->count);
+
+	//metrics
+
+	fclose(logfile);
 
 	free(alg);
 	

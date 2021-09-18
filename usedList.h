@@ -24,6 +24,6 @@ void usedList_delete(UsedList* l, int id);								//delete from UsedList
 void usedList_print(UsedList* l);										//print UsedList
 
 void usedList_reduceDurations(UsedList* l);								//reduce duration of all processes by 1
-void checkFinishedProcesses(UsedList* ul, SpaceList* sl);				//check if any process has finished
+void checkFinishedProcesses(UsedList* ul, SpaceList* sl, FILE* logfile, int i);				//check if any process has finished
 
 #endif

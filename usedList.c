@@ -78,16 +78,16 @@ UsedListNode* usedList_search(UsedList* l, int id) {	//search in UsedList
 
 	while(temp != NULL) {
 		if(temp->id == id) {
-			printf("Found ( %d, %d, %d, %d)\n", temp->id, temp->start, temp->end, temp->duration);
-			printf("---------------\n");
+			// printf("Found ( %d, %d, %d, %d)\n", temp->id, temp->start, temp->end, temp->duration);
+			// printf("---------------\n");
 			return temp;
 		} else {
 			temp = temp->next;
 		}
 	}
 
-	printf("Process with id: %d not found\n", id);
-	printf("---------------\n");
+	// printf("Process with id: %d not found\n", id);
+	// printf("---------------\n");
 
 	return NULL;
 }
@@ -102,8 +102,8 @@ void usedList_delete(UsedList* l, int id) {	//delete from UsedList
 			if(prev->next == temp) {
 				prev->next = temp->next;
 				free(temp);
-				printf("Process with id: %d deleted\n", id);
-				printf("---------------\n");
+				// printf("Process with id: %d deleted\n", id);
+				// printf("---------------\n");
 				return;
 			}
 			prev = prev->next;
@@ -111,11 +111,11 @@ void usedList_delete(UsedList* l, int id) {	//delete from UsedList
 	} else if(temp == l->head) {
 		l->head = temp->next;
 		free(temp);
-		printf("Process with id: %d deleted\n", id);
-		printf("---------------\n");
+		// printf("Process with id: %d deleted\n", id);
+		// printf("---------------\n");
 	} else {
-		printf("Process with id: %d not found\n", id);
-		printf("---------------\n");
+		// printf("Process with id: %d not found\n", id);
+		// printf("---------------\n");
 	}
 
 	return;
@@ -154,7 +154,7 @@ void usedList_reduceDurations(UsedList* l) {	//reduce duration of all processes 
 	return;
 }
 
-void checkFinishedProcesses(UsedList* ul, SpaceList* sl) {	//check if any process has finished
+void checkFinishedProcesses(UsedList* ul, SpaceList* sl, FILE* logfile, int i) {	//check if any process has finished
 
 	UsedListNode* temp = ul->head;
 	SpaceListNode* slnode;
@@ -168,6 +168,7 @@ void checkFinishedProcesses(UsedList* ul, SpaceList* sl) {	//check if any proces
 			} else {
 				spaceList_insert(sl, temp->start, temp->end);		//insert in spaceList
 			}
+			fprintf(logfile, "Process with id: %d finished at: %d time\n", temp->id, i);
 			usedList_delete(ul, temp->id);			//remove from usedList
 		}
 		temp = temp->next;

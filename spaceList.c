@@ -76,16 +76,16 @@ SpaceListNode* spaceList_search(SpaceList* l, int start) {		//search in SpaceLis
 
 	while(temp != NULL) {
 		if(temp->start == start) {
-			printf("Found ( %d, %d)\n", temp->start, temp->end);
-			printf("---------------\n");
+			// printf("Found ( %d, %d)\n", temp->start, temp->end);
+			// printf("---------------\n");
 			return temp;
 		} else {
 			temp = temp->next;
 		}
 	}
 
-	printf("Process that starts at: %d not found\n", start);
-	printf("---------------\n");
+	// printf("Process that starts at: %d not found\n", start);
+	// printf("---------------\n");
 
 	return NULL;
 }
@@ -100,8 +100,8 @@ void spaceList_delete(SpaceList* l, int start) {		//delete from SpaceList
 			if(prev->next == temp) {
 				prev->next = temp->next;
 				free(temp);
-				printf("Process that starts at: %d deleted\n", start);
-				printf("---------------\n");
+				// printf("Process that starts at: %d deleted\n", start);
+				// printf("---------------\n");
 				return;
 			}
 			prev = prev->next;
@@ -109,11 +109,11 @@ void spaceList_delete(SpaceList* l, int start) {		//delete from SpaceList
 	} else if(temp == l->head) {
 		l->head = temp->next;
 		free(temp);
-		printf("Process that starts at: %d deleted\n", start);
-		printf("---------------\n");
+		// printf("Process that starts at: %d deleted\n", start);
+		// printf("---------------\n");
 	} else {
-		printf("Process that starts at: %d not found\n", start);
-		printf("---------------\n");
+		// printf("Process that starts at: %d not found\n", start);
+		// printf("---------------\n");
 	}
 
 	return;
@@ -224,13 +224,18 @@ SpaceListNode* buddy(SpaceList* l, int size) {		//buddy algorithm
 	SpaceListNode* temp = l->head;
 	SpaceListNode* buddy = NULL;
 	int middle, fits = 0;
+	int buddyStart = temp->start;
+	int buddyEnd = temp->end;
 
 	while(temp != NULL) {
-		middle = (temp->end + 1) / 2;
-		if((size > middle) && (size <= temp->end + 1)) {
+		middle = (buddyEnd + 1) / 2;
+		if((size > middle) && (size <= buddyEnd + 1)) {
 			//xwraei sto miso
+		} else {
+			buddyEnd = middle;
 		}
-		temp->next;
+		temp = temp->next;
 	}
 
+	return buddy;
 }
