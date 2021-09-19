@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "list.h"
+#include "shared_memory.h"
 
 List* list_init() { //initialize List
 
@@ -69,18 +70,6 @@ ListNode* list_search(List* l, int size) { //search in List based on size
     return NULL;
 }
 
-void list_delete(List* l) { //delete first node from List
-
-    ListNode* temp = l->head;
-
-    if (temp != NULL) {
-        l->head = l->head->next;
-        free(temp);
-    }
-
-    return;
-}
-
 void list_print(List* l) { //print List
 
     ListNode* temp = l->head;
@@ -98,6 +87,33 @@ void list_print(List* l) { //print List
         temp = temp->next;
     }
     printf("---------------\n");
+
+    return;
+}
+
+void list_delete(List* l, int id) { //delete node from List
+
+    ListNode* temp = l->head;
+    ListNode* prev;
+
+    int first = 1;
+
+    while(temp != NULL) {
+        if(temp->id == id) {
+            if(first) {
+                l->head = temp->next;
+            } else {
+                prev->next = temp->next;
+            }
+
+            free(temp);
+            return;
+        } else {
+            prev = temp;
+            temp = temp->next;
+            first = 0;
+        }
+    }
 
     return;
 }
@@ -128,8 +144,19 @@ void checkWaitingList(List* l, SpaceList* sl, UsedList* ul, char* alg, FILE* log
             if (space != NULL) {
                 usedList_insert(ul, l->head->id, space->start, space->start + l->head->size - 1, l->head->duration);
                 fprintf(logfile, "Process with id: %d removed from waiting list and placed in memory from: %d to: %d at: %d time. Waiting time: %d\n", ul->count - 1, space->start, space->start + l->head->size - 1, i, i - l->head->arrival);
+
+                printf("[ M ]: Process resumed (VP_RESUME): #%d\n", l->head->id);
+
+                char result[20] = "VP_RESUMED";
+                shared_memory_m_place(result, l->head->id, 0, l->head->duration);
+                shared_memory_m_obtain(result, NULL, NULL, NULL); // get ok
+
+                if (strcmp(result, "OK") != 0) {
+                    exit(4);
+                }
+
                 space->start = space->start + l->head->size;
-                list_delete(l);
+                list_delete(l, l->head->id);
             }
         }
     }

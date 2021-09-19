@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "usedList.h"
+#include "shared_memory.h"
 
 UsedList* usedList_init() { //initialize UsedList
 
@@ -168,7 +169,7 @@ void removeFinishedProcess(UsedList* ul, SpaceList* sl, FILE* logfile, int id) {
                 spaceList_insert(sl, temp->start, temp->end); //insert in spaceList
             }
             fprintf(logfile, "Process with id: %d\n", id);
-            
+                                   
             UsedListNode* victim = temp;
             temp = temp->next;
             

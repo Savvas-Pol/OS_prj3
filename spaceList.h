@@ -4,6 +4,7 @@
 typedef struct SpaceListNode {
     int start;
     int end;
+    int used;   //flag for buddy algorithm
     struct SpaceListNode* next;
 } SpaceListNode; //nodes of SpaceList
 

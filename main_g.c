@@ -29,14 +29,13 @@ int main_g(int argc, char** argv) {
 
     printf("G started with pid: %d \n", getpid());
 
-
     UsedList* runningList = usedList_init();
     List* waitingList = list_init(); //list for waiting processes
 
     int fake_pid = 0;
 
     for (i = 0; i < D; i++) {
-        printf("  ---- Simulation step %d of %d  --- \n", i + 1, D);
+        printf("  --- Simulation step %d of %d  --- \n", i + 1, D);
 
         if (i == 0) { //beginning of simulation
             nextArrival = generatePoissonVariable(t);
@@ -46,17 +45,21 @@ int main_g(int argc, char** argv) {
         } else if (nextArrival == 0) { //arrival of process
             nextArrival = generatePoissonVariable(t);
 
-            printf("[ G ] Process #%d arrived, next arrival in %d steps \n", fake_pid, nextArrival);
+            printf("[ G ] Process #%d arrived, duration:%d, estimated completion at: %d, next arrival in %d steps \n", fake_pid, duration, i + duration, nextArrival);
 
             shared_memory_g_place("VP_START", fake_pid, size, duration);
 
             shared_memory_g_obtain(result, &fake_pid, &size, &duration);
 
             if (strcmp(result, "STARTED") == 0) {
+                printf("[ G ] STARTED result for PID: %d \n", fake_pid);
                 usedList_insert(runningList, fake_pid, 0, 0, duration);
+            } else if (strcmp(result, "FAILED") == 0) {
+                printf("[ G ] FAILED result\n");
+                list_insert(waitingList, fake_pid, size, duration, i);
+            } else {
+                exit(3);
             }
-
-
 
             size = generateUniformVariable(lo, hi);
             duration = (int) generateExponentialVariable((double) T);
@@ -65,28 +68,45 @@ int main_g(int argc, char** argv) {
 
         usedList_reduceDurations(runningList); //reduce duration of processes on every iteration
 
-
         UsedListNode* temp = runningList->head;
-        SpaceListNode* slnode;
-
+        
         while (temp != NULL) {
             if (temp->duration == 0) { //if process has finished
-                
+
                 UsedListNode* victim = temp;
                 temp = temp->next;
-                
+
+                printf("[ G ] Sending VP_STOP %d to M \n", victim->id);                        
+                        
                 shared_memory_g_place("VP_STOP", victim->id, 0, 0);
                 
-                // while .... move processes from waiting list to runninglist
-                 
+                while (1) {
+                    int wake_id = 0;
+                    int wake_size = 0;
+                    int wake_duration = 0;
+                    
+                    shared_memory_g_obtain(result, &wake_id, &wake_size, &wake_duration);
+                    if (strcmp(result,"#") == 0) {
+                        break;
+                    }
+                    
+                    printf("[ G ] Received VP_RESUME for %d \n", wake_id);        
+                    
+                    shared_memory_g_place("OK", 0, 0, 0);
+                    
+                    list_delete(waitingList, wake_id); 
+                    
+                    usedList_insert(runningList, fake_pid, 0, 0, wake_duration);                    
+                }
+
                 usedList_delete(runningList, victim->id); //remove from startedList                
             } else {
                 temp = temp->next;
             }
         }
-        
+
         nextArrival--;
-        usleep(50000);
+        // usleep(50000);
     }
 
     shared_memory_g_place("EXIT", 0, 0, 0);

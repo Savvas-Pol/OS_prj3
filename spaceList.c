@@ -223,15 +223,37 @@ SpaceListNode* buddy(SpaceList* l, int size) { //buddy algorithm
     SpaceListNode* temp = l->head;
     SpaceListNode* buddy = NULL;
     int middle, fits = 0;
-    int buddyStart = temp->start;
-    int buddyEnd = temp->end;
 
     while (temp != NULL) {
-        middle = (buddyEnd + 1) / 2;
-        if ((size > middle) && (size <= buddyEnd + 1)) {
-            //xwraei sto miso
-        } else {
-            buddyEnd = middle;
+        while(fits != 1) {
+            middle = (temp->end + 1) / 2;
+            if ((size > middle) && (size <= temp->end + 1)) {
+                buddy = temp;
+                buddy->used = 1;
+                fits = 1;
+                return buddy;
+            } else {
+                if(temp->next == NULL) {
+                    spaceList_insert(l, temp->start, middle - 1);
+                    temp->start = middle;
+                    temp = temp->next;
+                } else {
+                    if(temp->next->end - temp->next->start + 1 < size) {
+                        //borei na ksanaspasei
+                        buddy = temp;
+                        buddy->used = 1;
+                        fits = 1;
+                        return buddy;
+                    } else {
+                        if(temp->next->used == 1) {
+                            middle = (temp->end - temp->start + 1) / 2;
+                            spaceList_insert(l, temp->start, temp->start + middle - 1);
+                            temp->start = temp->start + middle;
+                        }
+                        temp = temp->next;
+                    }
+                }
+            }
         }
         temp = temp->next;
     }

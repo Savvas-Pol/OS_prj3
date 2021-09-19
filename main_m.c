@@ -14,12 +14,14 @@
 #include "shared_memory.h"
 
 int main_m(int argc, char** argv) {
-    const char * LOGFILE = "logfile_m.txt";
+
+    const char * LOGFILE = "logfile.txt";
 
     int i = 0, D, lo, hi, t, T, S;
     char command[20] = {0};
     int fakeid, size, duration;
     char* alg;
+    double E = 0.0;
 
     FILE* logfile = fopen(LOGFILE, "w+");
 
@@ -45,6 +47,8 @@ int main_m(int argc, char** argv) {
             break;
         } else if (strcmp(command, "VP_START") == 0) {
             printf("[ M ]: VPSTART received: <%d,%d,%d>\n", fakeid, size, duration);
+
+            E += size*duration;
 
             if ((spaceList_full(spaceList) == 0)) {
                 if (strcmp(alg, "best-fit") == 0) {
@@ -72,27 +76,58 @@ int main_m(int argc, char** argv) {
                 shared_memory_m_place("FAILED", fakeid, size, duration);
             }
         } else if (strcmp(command, "VP_STOP") == 0) {
+            printf("[ M ]: VP_STOP received: <%d,%d,%d>\n", fakeid, size, duration);
+
             removeFinishedProcess(runningList, spaceList, logfile, fakeid);
-            
-            //        checkWaitingList(L, spaceList, usedList, alg, logfile, i); //check waiting list
-            
-            // while ... move processes from wailting list to running list
-            // and notify G
+
+            checkWaitingList(waitingList, spaceList, runningList, alg, logfile, i); //check waiting list
+
+            shared_memory_m_place("#", 0, 0, 0);    //notify G
         }
     }
 
     fprintf(logfile, "Totally %d processes were placed in waiting list\n", waitingList->count);
 
-    fclose(logfile);
-
     free(alg);
 
     shared_memory_detach();
+    
+    fprintf(logfile, "==========================\n");
+    fprintf(logfile, "Calculation of statistics\n");
+    fprintf(logfile, "==========================\n");
+
+    SpaceListNode* node = spaceList->head;
+
+    double mean = 0.0;
+    int counter =0;
+    double var = 0;
+
+    E /= S*D;
+
+    while (node != NULL) {
+        counter++;
+        mean += node->end + 1 - node->start;
+        node=node->next;       
+    }
+    mean /= counter;
+    
+    node = spaceList->head;
+    
+    while (node != NULL) {
+        var += ((node->end + 1 - node->start) - mean)*((node->end + 1 - node->start) - mean);
+        node=node->next;       
+    }
+    var /= counter;
+    
+    fprintf(logfile, "Mean: %lf\n", mean);
+    fprintf(logfile, "Var: %lf\n", var);
+    fprintf(logfile, "E: %lf\n", E);
 
     spaceList_destroy(spaceList);
     usedList_destroy(runningList);
     list_destroy(waitingList);
 
+    fclose(logfile);
     printf("M finished with pid: %d \n", getpid());
 
     return 0;

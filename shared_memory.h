@@ -12,10 +12,8 @@ void shared_memory_detach();
 void shared_memory_g_place(char command[20],int fakeid, int size, int duration);
 void shared_memory_m_place(char command[20],int fakeid, int size, int duration);
 
-void shared_memory_g_obtain(char command[20],int *fakeid, int *size, int * duration);
-void shared_memory_m_obtain(char command[20],int *fakeid, int *size, int * duration);
+void shared_memory_g_obtain(char command[20],int* fakeid, int* size, int* duration);
+void shared_memory_m_obtain(char command[20],int* fakeid, int* size, int* duration);
 
 
-
-#endif /* SHARED_MEMORY_H */
-
+#endif

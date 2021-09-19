@@ -81,7 +81,7 @@ void shared_memory_init() {
     }
 
     union senum arg;
-    arg.val = 1;
+    arg.val = 0;
     semctl(semid, SEM_G, SETVAL, arg);
 
     arg.val = 0;
@@ -117,18 +117,31 @@ void shared_memory_m_place(char command[20], int fakeid, int size, int duration)
     up(SEM_G);
 }
 
-void shared_memory_g_obtain(char command[20], int *fakeid, int *size, int * duration) {
+void shared_memory_g_obtain(char command[20], int* fakeid, int* size, int* duration) {
     down(SEM_G);
     strcpy(command, pmem->command);
-    *fakeid = pmem->fakeid;
-    *size = pmem->size;
-    *duration = pmem->duration;
+    
+    if (fakeid != NULL) {
+        *fakeid = pmem->fakeid;
+    }
+    if (size != NULL) {
+        *size = pmem->size;
+    }
+    if (duration != NULL) {
+        *duration = pmem->duration;
+    }
 }
 
-void shared_memory_m_obtain(char command[20], int *fakeid, int *size, int * duration) {
+void shared_memory_m_obtain(char command[20], int* fakeid, int* size, int* duration) {
     down(SEM_M);
     strcpy(command, pmem->command);
-    *fakeid = pmem->fakeid;
-    *size = pmem->size;
-    *duration = pmem->duration;
+    if (fakeid != NULL) {
+        *fakeid = pmem->fakeid;
+    }
+    if (size != NULL) {
+        *size = pmem->size;
+    }
+    if (duration != NULL) {
+        *duration = pmem->duration;
+    }
 }

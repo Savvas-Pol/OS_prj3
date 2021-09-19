@@ -60,6 +60,6 @@ double generateExponentialVariable(double T) { //calculation with exponential di
     double u;
     u = rand() / (RAND_MAX + 1.0);
 //    printf("u = %lf\n", u);
-    return -log(u) / (1.0 / T);
+    return 1+ (-log(u) / (1.0 / T));
 }
 
